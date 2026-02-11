@@ -4,551 +4,563 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
-     MessageSquare,
-     Shield,
-     AlertCircle,
-     LogIn,
-     User,
-     FileText,
-     Clock,
-     CheckCircle,
-     ArrowRight,
-     Loader2,
-     Search,
-     Send,
-     ScanLine,
-     Lightbulb,
-     Eye,
-     Bell,
+  MessageSquare,
+  Shield,
+  AlertCircle,
+  LogIn,
+  User,
+  FileText,
+  Clock,
+  CheckCircle,
+  ArrowRight,
+  Loader2,
+  Search,
+  Send,
+  ScanLine,
+  Eye,
+  Bell,
+  Phone,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-     Card,
-     CardContent,
-     CardDescription,
-     CardHeader,
-     CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import { toast } from "sonner";
-
-interface SamadhanSession {
-     userId: string;
-     phone: string;
-     name: string;
-     pseudonym: string;
-}
+import { mockAuth, mockTickets } from "@/lib/mock-data";
 
 export default function SamadhanHomePage() {
-     const router = useRouter();
+  const router = useRouter();
 
-     // Mock session - set to null for logged out state
-     const session: SamadhanSession | null = null; // Change to mock data if needed
-     const isCheckingSession = false;
+  // Check mock session
+  const session = mockAuth.getSession();
+  const isCheckingSession = false;
 
-     // Tracking states
-     const [trackingId, setTrackingId] = useState("");
-     const [ticketNotFound, setTicketNotFound] = useState(false);
+  // Tracking states
+  const [trackingId, setTrackingId] = useState("");
+  const [ticketNotFound, setTicketNotFound] = useState(false);
+  const [isCheckingTicket, setIsCheckingTicket] = useState(false);
 
-     // Handle tracking - redirect directly to track page
-     const handleTrack = () => {
-          if (!trackingId.trim()) {
-               toast.error("Please enter a tracking ID");
-               return;
-          }
+  const handleTrack = () => {
+    if (!trackingId.trim()) {
+      toast.error("Please enter a tracking ID");
+      return;
+    }
 
-          // Redirect directly to the track page
-          router.push(`/track/${trackingId.trim()}`);
-     };
+    setIsCheckingTicket(true);
+    const trimmedId = trackingId.trim();
 
-     // Handle enter key for tracking input
-     const handleKeyPress = (e: React.KeyboardEvent) => {
-          if (e.key === "Enter") {
-               handleTrack();
-          }
-     };
+    // Simulate delay
+    setTimeout(() => {
+      // Check against mock tickets
+      const ticket = mockTickets.find((t) => t.referenceId === trimmedId);
 
-     return (
-          <div className="min-h-[calc(100vh-200px)]">
-               {/* HERO SECTION - Full Width Tracking */}
-               <section className="relative bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600 overflow-hidden">
-                    {/* Decorative background elements */}
-                    <div className="absolute inset-0 opacity-10">
-                         <div className="absolute top-0 left-0 w-72 h-72 bg-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>
-                         <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full translate-x-1/3 translate-y-1/3"></div>
-                         <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+      if (!ticket) {
+        setTicketNotFound(true);
+        toast.error("Ticket not found. Please check the reference ID.");
+        setIsCheckingTicket(false);
+        return;
+      }
+
+      if (ticket.queryType === "FEEDBACK") {
+        toast.error(
+          "Feedback submissions cannot be tracked. You can view them in your dashboard.",
+        );
+        setIsCheckingTicket(false);
+        return;
+      }
+
+      setIsCheckingTicket(false);
+      router.push(`/track/${trimmedId}`);
+    }, 800);
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleTrack();
+    }
+  };
+
+  return (
+    <div className="min-h-[calc(100vh-200px)]">
+      {/* HERO SECTION - Full Width Tracking */}
+      <section className="relative bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600 overflow-hidden">
+        {/* Decorative background elements */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 left-0 w-72 h-72 bg-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+          <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full translate-x-1/3 translate-y-1/3"></div>
+          <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-white rounded-full -translate-x-1/2 -translate-y-1/2"></div>
+        </div>
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left side - Content */}
+            <div className="text-white space-y-6">
+              <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 text-sm">
+                <Shield className="w-4 h-4" />
+                <span>Secure & Transparent</span>
+              </div>
+
+              <h1 className="text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight">
+                Track Your
+                <span className="block text-green-200">Grievance Status</span>
+              </h1>
+
+              <p className="text-lg text-green-100 max-w-lg">
+                Enter your reference ID to instantly check the status of your
+                submitted query. Track progress and get real-time updates on
+                your grievance resolution.
+              </p>
+
+              {/* Features list */}
+              <div className="grid grid-cols-2 gap-4 pt-4">
+                <div className="flex items-center gap-2 text-green-100">
+                  <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                    <Clock className="w-4 h-4" />
+                  </div>
+                  <span className="text-sm">Real-time Updates</span>
+                </div>
+                <div className="flex items-center gap-2 text-green-100">
+                  <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                    <Search className="w-4 h-4" />
+                  </div>
+                  <span className="text-sm">Instant Tracking</span>
+                </div>
+                <div className="flex items-center gap-2 text-green-100">
+                  <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                    <Eye className="w-4 h-4" />
+                  </div>
+                  <span className="text-sm">Full Transparency</span>
+                </div>
+                <div className="flex items-center gap-2 text-green-100">
+                  <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                    <Bell className="w-4 h-4" />
+                  </div>
+                  <span className="text-sm">Status Alerts</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right side - Tracking Card */}
+            <div className="lg:pl-8">
+              <Card className="bg-white/95 backdrop-blur-sm border-0 shadow-2xl rounded-3xl overflow-hidden">
+                <CardContent className="p-6 sm:p-8">
+                  {/* Tracking Icon */}
+                  <div className="text-center mb-6">
+                    <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto shadow-lg mb-4">
+                      <ScanLine className="w-8 h-8 text-white" />
+                    </div>
+                    <h2 className="text-xl font-semibold text-gray-900">
+                      Track Your Ticket
+                    </h2>
+                    <p className="text-gray-500 text-sm mt-1">
+                      Enter your reference ID below
+                    </p>
+                  </div>
+
+                  {/* Search Input */}
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="trackingInput" className="sr-only">
+                        Reference ID
+                      </Label>
+                      <div className="relative">
+                        {trackingId && (
+                          <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
+                            <FileText className="w-5 h-5 text-green-600" />
+                          </div>
+                        )}
+                        <Input
+                          id="trackingInput"
+                          placeholder="SAMADHAN-2026-XX-XX-XXXXX"
+                          value={trackingId}
+                          onChange={(e) => {
+                            setTrackingId(e.target.value.toUpperCase());
+                            setTicketNotFound(false);
+                          }}
+                          onKeyPress={handleKeyPress}
+                          className={`h-14 ${
+                            trackingId ? "pl-12" : "pl-4"
+                          } pr-14 text-center font-mono text-base border-2 rounded-full transition-all ${
+                            ticketNotFound
+                              ? "border-red-300 bg-red-50 focus:border-red-500"
+                              : trackingId
+                                ? "border-green-300 bg-green-50 focus:border-green-500"
+                                : "border-gray-200 focus:border-green-500"
+                          }`}
+                        />
+                        <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                          <button
+                            type="button"
+                            onClick={handleTrack}
+                            disabled={!trackingId.trim() || isCheckingTicket}
+                            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg ${
+                              ticketNotFound
+                                ? "bg-red-500"
+                                : "bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
+                            }`}
+                          >
+                            {isCheckingTicket ? (
+                              <Loader2 className="w-5 h-5 text-white animate-spin" />
+                            ) : ticketNotFound ? (
+                              <AlertCircle className="w-5 h-5 text-white" />
+                            ) : trackingId ? (
+                              <ArrowRight className="w-5 h-5 text-white" />
+                            ) : (
+                              <Search className="w-5 h-5 text-white" />
+                            )}
+                          </button>
+                        </div>
+                      </div>
                     </div>
 
-                    <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
-                         <div className="grid lg:grid-cols-2 gap-12 items-center">
-                              {/* Left side - Content */}
-                              <div className="text-white space-y-6">
-                                   <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 text-sm">
-                                        <Shield className="w-4 h-4" />
-                                        <span>Secure & Transparent</span>
-                                   </div>
+                    {/* Error Messages */}
+                    {ticketNotFound && (
+                      <p className="text-sm text-red-600 text-center bg-red-50 rounded-lg px-4 py-2">
+                        <AlertCircle className="w-4 h-4 inline mr-1" />
+                        Ticket not found. Please check the reference ID.
+                      </p>
+                    )}
 
-                                   <h1 className="text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight">
-                                        Track Your
-                                        <span className="block text-green-200">Grievance Status</span>
-                                   </h1>
+                    {!ticketNotFound && (
+                      <p className="text-xs text-gray-500 text-center">
+                        Reference ID was provided when you submitted your query
+                      </p>
+                    )}
+                  </div>
 
-                                   <p className="text-lg text-green-100 max-w-lg">
-                                        Enter your reference ID to instantly check the status of your
-                                        submitted query. Track progress and get real-time updates on
-                                        your grievance resolution.
-                                   </p>
-
-                                   {/* Features list */}
-                                   <div className="grid grid-cols-2 gap-4 pt-4">
-                                        <div className="flex items-center gap-2 text-green-100">
-                                             <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-                                                  <Clock className="w-4 h-4" />
-                                             </div>
-                                             <span className="text-sm">Real-time Updates</span>
-                                        </div>
-                                        <div className="flex items-center gap-2 text-green-100">
-                                             <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-                                                  <Search className="w-4 h-4" />
-                                             </div>
-                                             <span className="text-sm">Instant Tracking</span>
-                                        </div>
-                                        <div className="flex items-center gap-2 text-green-100">
-                                             <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-                                                  <Eye className="w-4 h-4" />
-                                             </div>
-                                             <span className="text-sm">Full Transparency</span>
-                                        </div>
-                                        <div className="flex items-center gap-2 text-green-100">
-                                             <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-                                                  <Bell className="w-4 h-4" />
-                                             </div>
-                                             <span className="text-sm">Status Alerts</span>
-                                        </div>
-                                   </div>
-                              </div>
-
-                              {/* Right side - Tracking Card */}
-                              <div className="lg:pl-8">
-                                   <Card className="bg-white/95 backdrop-blur-sm border-0 shadow-2xl rounded-3xl overflow-hidden">
-                                        <CardContent className="p-6 sm:p-8">
-                                             {/* Tracking Icon */}
-                                             <div className="text-center mb-6">
-                                                  <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto shadow-lg mb-4">
-                                                       <ScanLine className="w-8 h-8 text-white" />
-                                                  </div>
-                                                  <h2 className="text-xl font-semibold text-gray-900">
-                                                       Track Your Ticket
-                                                  </h2>
-                                                  <p className="text-gray-500 text-sm mt-1">
-                                                       Enter your reference ID below
-                                                  </p>
-                                             </div>
-
-                                             {/* Search Input */}
-                                             <div className="space-y-4">
-                                                  <div className="space-y-2">
-                                                       <Label htmlFor="trackingInput" className="sr-only">
-                                                            Reference ID
-                                                       </Label>
-                                                       <div className="relative">
-                                                            {trackingId && (
-                                                                 <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
-                                                                      <FileText className="w-5 h-5 text-green-600" />
-                                                                 </div>
-                                                            )}
-                                                            <Input
-                                                                 id="trackingInput"
-                                                                 placeholder="SAM-2025-XX-XX-XXXXX"
-                                                                 value={trackingId}
-                                                                 onChange={(e) => {
-                                                                      setTrackingId(e.target.value.toUpperCase());
-                                                                      setTicketNotFound(false);
-                                                                 }}
-                                                                 onKeyPress={handleKeyPress}
-                                                                 className={`h-14 ${trackingId ? "pl-12" : "pl-4"
-                                                                      } pr-14 text-center font-mono text-base border-2 rounded-full transition-all ${ticketNotFound
-                                                                           ? "border-red-300 bg-red-50 focus:border-red-500"
-                                                                           : trackingId
-                                                                                ? "border-green-300 bg-green-50 focus:border-green-500"
-                                                                                : "border-gray-200 focus:border-green-500"
-                                                                      }`}
-                                                            />
-                                                            <div className="absolute right-2 top-1/2 -translate-y-1/2">
-                                                                 <button
-                                                                      type="button"
-                                                                      onClick={handleTrack}
-                                                                      disabled={!trackingId.trim()}
-                                                                      className={`w-10 h-10 rounded-full flex items-center justify-center transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg ${ticketNotFound
-                                                                           ? "bg-red-500"
-                                                                           : "bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
-                                                                           }`}
-                                                                 >
-                                                                      {ticketNotFound ? (
-                                                                           <AlertCircle className="w-5 h-5 text-white" />
-                                                                      ) : trackingId ? (
-                                                                           <ArrowRight className="w-5 h-5 text-white" />
-                                                                      ) : (
-                                                                           <Search className="w-5 h-5 text-white" />
-                                                                      )}
-                                                                 </button>
-                                                            </div>
-                                                       </div>
-                                                  </div>
-
-                                                  {/* Error Messages */}
-                                                  {ticketNotFound && (
-                                                       <p className="text-sm text-red-600 text-center bg-red-50 rounded-lg px-4 py-2">
-                                                            <AlertCircle className="w-4 h-4 inline mr-1" />
-                                                            Ticket not found. Please check the reference ID.
-                                                       </p>
-                                                  )}
-
-                                                  {/* Help text */}
-                                                  {!ticketNotFound && (
-                                                       <p className="text-xs text-gray-500 text-center">
-                                                            Reference ID was provided when you submitted your query
-                                                       </p>
-                                                  )}
-                                             </div>
-
-                                             {/* Logged in user shortcut */}
-                                             {session && (
-                                                  <div className="mt-6 pt-6 border-t border-gray-100">
-                                                       <Link href="/dashboard">
-                                                            <Button
-                                                                 variant="outline"
-                                                                 className="w-full rounded-full border-2 border-green-200 hover:bg-green-50 gap-2"
-                                                            >
-                                                                 <User className="w-4 h-4" />
-                                                                 View All My Tickets
-                                                            </Button>
-                                                       </Link>
-                                                  </div>
-                                             )}
-                                        </CardContent>
-                                   </Card>
-                              </div>
-                         </div>
+                  {/* Logged in user shortcut */}
+                  {session && (
+                    <div className="mt-6 pt-6 border-t border-gray-100">
+                      <Link href="/dashboard">
+                        <Button
+                          variant="outline"
+                          className="w-full rounded-full border-2 border-green-200 hover:bg-green-50 gap-2"
+                        >
+                          <User className="w-4 h-4" />
+                          View All My Tickets
+                        </Button>
+                      </Link>
                     </div>
-               </section>
-
-               {/* SECOND SECTION - Portal Info & Actions */}
-               <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
-                    <div className="max-w-7xl mx-auto">
-                         <div className="text-center mb-12">
-                              {/* Logo */}
-                              <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl">
-                                   <MessageSquare className="h-10 w-10 text-white" />
-                              </div>
-
-                              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-                                   SAMADHAN
-                              </h2>
-                              <p className="text-lg text-gray-600 mb-2">
-                                   Citizen Grievance & Feedback Portal
-                              </p>
-                              <p className="text-gray-500 max-w-2xl mx-auto">
-                                   Submit your grievances, feedback, and suggestions to the District
-                                   Administrative Centre, Gangtok. We ensure timely resolution and
-                                   transparent communication.
-                              </p>
-                         </div>
-
-                         {/* CTA Buttons */}
-                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-                              {isCheckingSession ? (
-                                   <Loader2 className="h-6 w-6 animate-spin text-green-600" />
-                              ) : session ? (
-                                   <>
-                                        <Link href="/dashboard">
-                                             <Button
-                                                  size="lg"
-                                                  className="w-full sm:w-auto h-14 px-8 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 rounded-full gap-2 text-base shadow-lg"
-                                             >
-                                                  <Shield className="h-5 w-5" />
-                                                  My Dashboard
-                                             </Button>
-                                        </Link>
-                                        <Link href="/submit">
-                                             <Button
-                                                  size="lg"
-                                                  variant="outline"
-                                                  className="w-full sm:w-auto h-14 px-8 rounded-full border-2 border-green-300 hover:bg-green-50 hover:border-green-400 gap-2 text-base"
-                                             >
-                                                  <MessageSquare className="h-5 w-5" />
-                                                  Submit New Query
-                                             </Button>
-                                        </Link>
-                                   </>
-                              ) : (
-                                   <>
-                                        <Link href="/login">
-                                             <Button
-                                                  size="lg"
-                                                  className="w-full sm:w-auto h-14 px-8 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 rounded-full gap-2 text-base shadow-lg"
-                                             >
-                                                  <LogIn className="h-5 w-5" />
-                                                  Login / Register
-                                             </Button>
-                                        </Link>
-                                        <Link href="/submit">
-                                             <Button
-                                                  size="lg"
-                                                  variant="outline"
-                                                  className="w-full sm:w-auto h-14 px-8 rounded-full border-2 border-green-300 hover:bg-green-50 hover:border-green-400 gap-2 text-base"
-                                             >
-                                                  <Send className="h-5 w-5" />
-                                                  Submit Query
-                                             </Button>
-                                        </Link>
-                                   </>
-                              )}
-                         </div>
-
-                         {/* Features Grid */}
-                         <div className="grid md:grid-cols-3 gap-8">
-                              <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-emerald-50 hover:shadow-xl transition-all duration-300 rounded-2xl overflow-hidden group">
-                                   <CardHeader className="text-center pb-2 pt-8">
-                                        <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md group-hover:scale-110 transition-transform">
-                                             <AlertCircle className="h-7 w-7 text-white" />
-                                        </div>
-                                        <CardTitle className="text-lg text-gray-900">
-                                             File Grievances
-                                        </CardTitle>
-                                   </CardHeader>
-                                   <CardContent className="text-center pb-8">
-                                        <CardDescription className="text-gray-600">
-                                             Report issues with government services and get timely
-                                             resolution
-                                        </CardDescription>
-                                   </CardContent>
-                              </Card>
-
-                              <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-indigo-50 hover:shadow-xl transition-all duration-300 rounded-2xl overflow-hidden group">
-                                   <CardHeader className="text-center pb-2 pt-8">
-                                        <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md group-hover:scale-110 transition-transform">
-                                             <MessageSquare className="h-7 w-7 text-white" />
-                                        </div>
-                                        <CardTitle className="text-lg text-gray-900">
-                                             Submit Feedback
-                                        </CardTitle>
-                                   </CardHeader>
-                                   <CardContent className="text-center pb-8">
-                                        <CardDescription className="text-gray-600">
-                                             Share your experience and help us improve our services
-                                        </CardDescription>
-                                   </CardContent>
-                              </Card>
-
-                              <Card className="border-0 shadow-lg bg-gradient-to-br from-amber-50 to-orange-50 hover:shadow-xl transition-all duration-300 rounded-2xl overflow-hidden group">
-                                   <CardHeader className="text-center pb-2 pt-8">
-                                        <div className="w-14 h-14 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md group-hover:scale-110 transition-transform">
-                                             <Lightbulb className="h-7 w-7 text-white" />
-                                        </div>
-                                        <CardTitle className="text-lg text-gray-900">
-                                             Share Suggestions
-                                        </CardTitle>
-                                   </CardHeader>
-                                   <CardContent className="text-center pb-8">
-                                        <CardDescription className="text-gray-600">
-                                             Propose ideas to enhance public services and administration
-                                        </CardDescription>
-                                   </CardContent>
-                              </Card>
-                         </div>
-                    </div>
-               </section>
-
-               {/* HOW IT WORKS SECTION - Professional Redesign */}
-               <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-50 to-white">
-                    <div className="max-w-6xl mx-auto">
-                         <div className="text-center mb-16">
-                              <span className="inline-block px-4 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full mb-4">
-                                   Simple Process
-                              </span>
-                              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-                                   How It Works
-                              </h2>
-                              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                                   Three simple steps to get your grievance addressed efficiently
-                              </p>
-                         </div>
-
-                         <div className="relative">
-                              {/* Progress line - desktop only */}
-                              <div className="hidden lg:block absolute top-24 left-[15%] right-[15%] h-1 bg-gradient-to-r from-green-200 via-green-400 to-green-200 rounded-full"></div>
-
-                              <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
-                                   {/* Step 1 */}
-                                   <div className="relative group">
-                                        <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 h-full">
-                                             {/* Step number */}
-                                             <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg ring-4 ring-white z-10">
-                                                  1
-                                             </div>
-
-                                             <div className="pt-6 text-center">
-                                                  <div className="w-16 h-16 bg-gradient-to-br from-green-100 to-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-5 group-hover:scale-110 transition-transform">
-                                                       <FileText className="h-8 w-8 text-green-600" />
-                                                  </div>
-                                                  <h3 className="text-xl font-bold text-gray-900 mb-3">
-                                                       Submit Your Query
-                                                  </h3>
-                                                  <p className="text-gray-600 leading-relaxed">
-                                                       Fill out our simple form with your grievance, feedback, or
-                                                       suggestion. Attach supporting documents if needed.
-                                                  </p>
-                                                  <div className="mt-5 flex flex-wrap justify-center gap-2">
-                                                       <span className="inline-flex items-center px-3 py-1 bg-green-50 text-green-700 text-xs font-medium rounded-full">
-                                                            <CheckCircle className="h-3 w-3 mr-1" /> Grievance
-                                                       </span>
-                                                       <span className="inline-flex items-center px-3 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-full">
-                                                            <CheckCircle className="h-3 w-3 mr-1" /> Feedback
-                                                       </span>
-                                                       <span className="inline-flex items-center px-3 py-1 bg-amber-50 text-amber-700 text-xs font-medium rounded-full">
-                                                            <CheckCircle className="h-3 w-3 mr-1" /> Suggestion
-                                                       </span>
-                                                  </div>
-                                             </div>
-                                        </div>
-                                   </div>
-
-                                   {/* Step 2 */}
-                                   <div className="relative group">
-                                        <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 h-full">
-                                             <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg ring-4 ring-white z-10">
-                                                  2
-                                             </div>
-
-                                             <div className="pt-6 text-center">
-                                                  <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-5 group-hover:scale-110 transition-transform">
-                                                       <Eye className="h-8 w-8 text-blue-600" />
-                                                  </div>
-                                                  <h3 className="text-xl font-bold text-gray-900 mb-3">
-                                                       Track Progress
-                                                  </h3>
-                                                  <p className="text-gray-600 leading-relaxed">
-                                                       Use your reference ID to track real-time status. Receive
-                                                       SMS updates as your query moves through the system.
-                                                  </p>
-                                                  <div className="mt-5 flex flex-wrap justify-center gap-2">
-                                                       <span className="inline-flex items-center px-3 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-full">
-                                                            <Clock className="h-3 w-3 mr-1" /> Real-time Updates
-                                                       </span>
-                                                       <span className="inline-flex items-center px-3 py-1 bg-purple-50 text-purple-700 text-xs font-medium rounded-full">
-                                                            <Bell className="h-3 w-3 mr-1" /> SMS Alerts
-                                                       </span>
-                                                  </div>
-                                             </div>
-                                        </div>
-                                   </div>
-
-                                   {/* Step 3 */}
-                                   <div className="relative group">
-                                        <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 h-full">
-                                             <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg ring-4 ring-white z-10">
-                                                  3
-                                             </div>
-
-                                             <div className="pt-6 text-center">
-                                                  <div className="w-16 h-16 bg-gradient-to-br from-emerald-100 to-green-100 rounded-2xl flex items-center justify-center mx-auto mb-5 group-hover:scale-110 transition-transform">
-                                                       <CheckCircle className="h-8 w-8 text-emerald-600" />
-                                                  </div>
-                                                  <h3 className="text-xl font-bold text-gray-900 mb-3">
-                                                       Get Resolution
-                                                  </h3>
-                                                  <p className="text-gray-600 leading-relaxed">
-                                                       Receive timely resolution with detailed updates. Accept
-                                                       the resolution or file an appeal if not satisfied.
-                                                  </p>
-                                                  <div className="mt-5 flex flex-wrap justify-center gap-2">
-                                                       <span className="inline-flex items-center px-3 py-1 bg-green-50 text-green-700 text-xs font-medium rounded-full">
-                                                            <CheckCircle className="h-3 w-3 mr-1" /> Accept
-                                                       </span>
-                                                       <span className="inline-flex items-center px-3 py-1 bg-orange-50 text-orange-700 text-xs font-medium rounded-full">
-                                                            <AlertCircle className="h-3 w-3 mr-1" /> Appeal
-                                                       </span>
-                                                  </div>
-                                             </div>
-                                        </div>
-                                   </div>
-                              </div>
-                         </div>
-
-                         {/* CTA */}
-                         <div className="text-center mt-12">
-                              <Link href="/submit">
-                                   <Button
-                                        size="lg"
-                                        className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 rounded-full px-8 h-12 shadow-lg"
-                                   >
-                                        Submit Your Query Now
-                                        <ArrowRight className="h-4 w-4 ml-2" />
-                                   </Button>
-                              </Link>
-                         </div>
-                    </div>
-               </section>
-
-               {/* BENEFITS SECTION */}
-               <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
-                    <div className="max-w-6xl mx-auto">
-                         <div className="text-center mb-12">
-                              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
-                                   Why Register?
-                              </h2>
-                              <p className="text-gray-600 max-w-2xl mx-auto">
-                                   Create an account to unlock full features
-                              </p>
-                         </div>
-
-                         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                              <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6 text-center hover:shadow-lg transition-shadow">
-                                   <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-4">
-                                        <Search className="h-6 w-6 text-green-600" />
-                                   </div>
-                                   <h4 className="font-semibold text-gray-900 mb-2">Track Status</h4>
-                                   <p className="text-sm text-gray-600">
-                                        Track all your submitted queries in one dashboard
-                                   </p>
-                              </div>
-
-                              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 text-center hover:shadow-lg transition-shadow">
-                                   <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-4">
-                                        <FileText className="h-6 w-6 text-blue-600" />
-                                   </div>
-                                   <h4 className="font-semibold text-gray-900 mb-2">Attachments</h4>
-                                   <p className="text-sm text-gray-600">
-                                        Upload and view supporting documents securely
-                                   </p>
-                              </div>
-
-                              <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-6 text-center hover:shadow-lg transition-shadow">
-                                   <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center mx-auto mb-4">
-                                        <Bell className="h-6 w-6 text-amber-600" />
-                                   </div>
-                                   <h4 className="font-semibold text-gray-900 mb-2">
-                                        Notifications
-                                   </h4>
-                                   <p className="text-sm text-gray-600">
-                                        Get SMS alerts when your ticket status changes
-                                   </p>
-                              </div>
-
-                              <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 text-center hover:shadow-lg transition-shadow">
-                                   <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mx-auto mb-4">
-                                        <MessageSquare className="h-6 w-6 text-purple-600" />
-                                   </div>
-                                   <h4 className="font-semibold text-gray-900 mb-2">Respond</h4>
-                                   <p className="text-sm text-gray-600">
-                                        Respond to officer queries and provide additional info
-                                   </p>
-                              </div>
-                         </div>
-                    </div>
-               </section>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
           </div>
-     );
+        </div>
+      </section>
+
+      {/* SECOND SECTION - Portal Info & Actions */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            {/* Logo */}
+            <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl">
+              <MessageSquare className="h-10 w-10 text-white" />
+            </div>
+
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+              SAMADHAN
+            </h2>
+            <p className="text-lg text-gray-600 mb-2">
+              Citizen Grievance & Feedback Portal
+            </p>
+            <p className="text-gray-500 max-w-2xl mx-auto">
+              Submit your grievances and feedback to the District Administrative
+              Centre, Gangtok. We ensure timely resolution and transparent
+              communication.
+            </p>
+          </div>
+
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+            {session ? (
+              <>
+                <Link href="/dashboard">
+                  <Button
+                    size="lg"
+                    className="w-full sm:w-auto h-14 px-8 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 rounded-full gap-2 text-base shadow-lg"
+                  >
+                    <Shield className="h-5 w-5" />
+                    My Dashboard
+                  </Button>
+                </Link>
+                <Link href="/submit">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="w-full sm:w-auto h-14 px-8 rounded-full border-2 border-green-300 hover:bg-green-50 hover:border-green-400 gap-2 text-base"
+                  >
+                    <MessageSquare className="h-5 w-5" />
+                    Submit New Query
+                  </Button>
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link href="/login">
+                  <Button
+                    size="lg"
+                    className="w-full sm:w-auto h-14 px-8 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 rounded-full gap-2 text-base shadow-lg"
+                  >
+                    <LogIn className="h-5 w-5" />
+                    Login / Register
+                  </Button>
+                </Link>
+                <Link href="/submit">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="w-full sm:w-auto h-14 px-8 rounded-full border-2 border-green-300 hover:bg-green-50 hover:border-green-400 gap-2 text-base"
+                  >
+                    <Send className="h-5 w-5" />
+                    Submit Query
+                  </Button>
+                </Link>
+              </>
+            )}
+          </div>
+
+          {/* Features Grid */}
+          <div className="grid md:grid-cols-3 gap-8">
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-green-50 to-emerald-50 hover:shadow-xl transition-all duration-300 rounded-2xl overflow-hidden group">
+              <CardHeader className="text-center pb-2 pt-8">
+                <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md group-hover:scale-110 transition-transform">
+                  <AlertCircle className="h-7 w-7 text-white" />
+                </div>
+                <CardTitle className="text-lg text-gray-900">
+                  File Grievances
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="text-center pb-8">
+                <CardDescription className="text-gray-600">
+                  Report issues with government services and get timely
+                  resolution
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-50 to-indigo-50 hover:shadow-xl transition-all duration-300 rounded-2xl overflow-hidden group">
+              <CardHeader className="text-center pb-2 pt-8">
+                <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md group-hover:scale-110 transition-transform">
+                  <MessageSquare className="h-7 w-7 text-white" />
+                </div>
+                <CardTitle className="text-lg text-gray-900">
+                  Submit Feedback
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="text-center pb-8">
+                <CardDescription className="text-gray-600">
+                  Share your experience and help us improve our services
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-amber-50 to-orange-50 hover:shadow-xl transition-all duration-300 rounded-2xl overflow-hidden group">
+              <CardHeader className="text-center pb-2 pt-8">
+                <div className="w-14 h-14 bg-gradient-to-br from-amber-500 to-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md group-hover:scale-110 transition-transform">
+                  <Clock className="h-7 w-7 text-white" />
+                </div>
+                <CardTitle className="text-lg text-gray-900">
+                  Track Status
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="text-center pb-8">
+                <CardDescription className="text-gray-600">
+                  Monitor the progress of your submitted queries in real-time
+                </CardDescription>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* HOW IT WORKS SECTION */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-50 to-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <span className="inline-block px-4 py-1 bg-green-100 text-green-700 text-sm font-medium rounded-full mb-4">
+              Simple Process
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+              How It Works
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Three simple steps to get your grievance addressed efficiently
+            </p>
+          </div>
+
+          <div className="relative">
+            {/* Progress line - desktop only */}
+            <div className="hidden lg:block absolute top-24 left-[15%] right-[15%] h-1 bg-gradient-to-r from-green-200 via-green-400 to-green-200 rounded-full"></div>
+
+            <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
+              {/* Step 1 */}
+              <div className="relative group">
+                <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 h-full">
+                  <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg ring-4 ring-white z-10">
+                    1
+                  </div>
+                  <div className="pt-6 text-center">
+                    <div className="w-16 h-16 bg-gradient-to-br from-green-100 to-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-5 group-hover:scale-110 transition-transform">
+                      <FileText className="h-8 w-8 text-green-600" />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-3">
+                      Submit Your Query
+                    </h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      Fill out our simple form with your grievance or feedback.
+                      Attach supporting documents if needed.
+                    </p>
+                    <div className="mt-5 flex flex-wrap justify-center gap-2">
+                      <span className="inline-flex items-center px-3 py-1 bg-green-50 text-green-700 text-xs font-medium rounded-full">
+                        <CheckCircle className="h-3 w-3 mr-1" /> Grievance
+                      </span>
+                      <span className="inline-flex items-center px-3 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-full">
+                        <CheckCircle className="h-3 w-3 mr-1" /> Feedback
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Step 2 */}
+              <div className="relative group">
+                <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 h-full">
+                  <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg ring-4 ring-white z-10">
+                    2
+                  </div>
+                  <div className="pt-6 text-center">
+                    <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-5 group-hover:scale-110 transition-transform">
+                      <Eye className="h-8 w-8 text-blue-600" />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-3">
+                      Track Progress
+                    </h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      Use your reference ID to track real-time status. Receive
+                      SMS updates as your query moves through the system.
+                    </p>
+                    <div className="mt-5 flex flex-wrap justify-center gap-2">
+                      <span className="inline-flex items-center px-3 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-full">
+                        <Clock className="h-3 w-3 mr-1" /> Real-time Updates
+                      </span>
+                      <span className="inline-flex items-center px-3 py-1 bg-purple-50 text-purple-700 text-xs font-medium rounded-full">
+                        <Bell className="h-3 w-3 mr-1" /> SMS Alerts
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Step 3 */}
+              <div className="relative group">
+                <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 h-full">
+                  <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg ring-4 ring-white z-10">
+                    3
+                  </div>
+                  <div className="pt-6 text-center">
+                    <div className="w-16 h-16 bg-gradient-to-br from-emerald-100 to-green-100 rounded-2xl flex items-center justify-center mx-auto mb-5 group-hover:scale-110 transition-transform">
+                      <CheckCircle className="h-8 w-8 text-emerald-600" />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-3">
+                      Get Resolution
+                    </h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      Receive timely resolution with detailed updates. Accept
+                      the resolution or file an appeal if not satisfied.
+                    </p>
+                    <div className="mt-5 flex flex-wrap justify-center gap-2">
+                      <span className="inline-flex items-center px-3 py-1 bg-green-50 text-green-700 text-xs font-medium rounded-full">
+                        <CheckCircle className="h-3 w-3 mr-1" /> Accept
+                      </span>
+                      <span className="inline-flex items-center px-3 py-1 bg-orange-50 text-orange-700 text-xs font-medium rounded-full">
+                        <AlertCircle className="h-3 w-3 mr-1" /> Appeal
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* CTA */}
+          <div className="text-center mt-12">
+            <Link href="/submit">
+              <Button
+                size="lg"
+                className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 rounded-full px-8 h-12 shadow-lg"
+              >
+                Submit Your Query Now
+                <ArrowRight className="h-4 w-4 ml-2" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* BENEFITS SECTION */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
+              Why Register?
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Create an account to unlock full features
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6 text-center hover:shadow-lg transition-shadow">
+              <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <Search className="h-6 w-6 text-green-600" />
+              </div>
+              <h4 className="font-semibold text-gray-900 mb-2">Track Status</h4>
+              <p className="text-sm text-gray-600">
+                Track all your submitted queries in one dashboard
+              </p>
+            </div>
+
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 text-center hover:shadow-lg transition-shadow">
+              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <FileText className="h-6 w-6 text-blue-600" />
+              </div>
+              <h4 className="font-semibold text-gray-900 mb-2">Attachments</h4>
+              <p className="text-sm text-gray-600">
+                Upload and view supporting documents securely
+              </p>
+            </div>
+
+            <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-6 text-center hover:shadow-lg transition-shadow">
+              <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <Bell className="h-6 w-6 text-amber-600" />
+              </div>
+              <h4 className="font-semibold text-gray-900 mb-2">
+                Notifications
+              </h4>
+              <p className="text-sm text-gray-600">
+                Get SMS alerts when your ticket status changes
+              </p>
+            </div>
+
+            <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 text-center hover:shadow-lg transition-shadow">
+              <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                <MessageSquare className="h-6 w-6 text-purple-600" />
+              </div>
+              <h4 className="font-semibold text-gray-900 mb-2">Respond</h4>
+              <p className="text-sm text-gray-600">
+                Respond to officer queries and provide additional info
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
 }
