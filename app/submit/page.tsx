@@ -24,6 +24,9 @@ import {
   ShieldCheck,
   User,
   Phone,
+  Copy,
+  Download,
+  Info,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -168,7 +171,40 @@ function SuccessModal({
             <p className="text-xl font-mono font-bold text-blue-700 bg-white rounded-lg px-4 py-2 inline-block">
               {referenceId}
             </p>
-            <p className="text-xs text-gray-500 mt-3">
+            <div className="flex items-center justify-center gap-2 mt-3">
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-xs gap-1 border-blue-300 text-blue-700 hover:bg-blue-100"
+                onClick={() => {
+                  navigator.clipboard.writeText(referenceId);
+                  toast.success("Reference ID copied to clipboard!");
+                }}
+              >
+                <Copy className="h-3 w-3" />
+                Copy ID
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-xs gap-1 border-blue-300 text-blue-700 hover:bg-blue-100"
+                onClick={() => {
+                  const text = `SAMADHAN Grievance Tracking\n\nReference ID: ${referenceId}\nSubmitted: ${new Date().toLocaleDateString("en-IN", { dateStyle: "full" })}\n\nTrack your grievance at: ${window.location.origin}/track/${referenceId}\n\nKeep this reference ID safe for future tracking.`;
+                  const blob = new Blob([text], { type: "text/plain" });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = `SAMADHAN-${referenceId}.txt`;
+                  a.click();
+                  URL.revokeObjectURL(url);
+                  toast.success("Tracking reference downloaded!");
+                }}
+              >
+                <Download className="h-3 w-3" />
+                Download
+              </Button>
+            </div>
+            <p className="text-xs text-gray-500 mt-2">
               Save this ID to track your grievance status
             </p>
           </div>
@@ -205,13 +241,6 @@ function SuccessModal({
               Track Status
             </Button>
           )}
-          <Button
-            variant={isFeedback ? "default" : "outline"}
-            onClick={() => router.push("/dashboard")}
-            className={`w-full ${isFeedback ? "bg-gradient-to-r from-green-600 to-emerald-600" : ""}`}
-          >
-            Go to Dashboard
-          </Button>
           <Button
             variant="ghost"
             onClick={() => router.push("/")}
@@ -779,6 +808,33 @@ function SubmitPageContent() {
                 Provide a subject and detailed description
               </p>
             </div>
+
+            {/* Helpful tips for filling the form */}
+            <div className="max-w-lg mx-auto bg-blue-50 border border-blue-200 rounded-xl p-4">
+              <div className="flex items-start gap-2">
+                <Info className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="text-sm font-medium text-blue-800 mb-1">
+                    Tips for a clear grievance
+                  </p>
+                  <ul className="text-xs text-blue-700 space-y-1 list-disc ml-4">
+                    <li>
+                      Be specific about the issue (e.g., &quot;Delay in land
+                      mutation&quot; instead of &quot;Office problem&quot;)
+                    </li>
+                    <li>
+                      Include dates, reference numbers, or application IDs if
+                      available
+                    </li>
+                    <li>Describe what happened and what you expected</li>
+                    <li>
+                      Mention any previous follow-ups or visits you have made
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
             <div className="max-w-lg mx-auto space-y-6">
               <div>
                 <Label className="text-sm font-medium text-gray-700 mb-2 block">
@@ -803,7 +859,7 @@ function SubmitPageContent() {
                 <Textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Describe your grievance in detail. Include any relevant information that will help us understand and address your concern..."
+                  placeholder="Example: I applied for land mutation 3 months ago (Application No: MUT/2025/4567) but it is still pending. I have visited the office multiple times but keep getting told to come back later..."
                   rows={6}
                   className="resize-none text-base"
                 />
@@ -859,6 +915,33 @@ function SubmitPageContent() {
                   onCheckedChange={setIsAnonymousToOfficer}
                 />
               </div>
+
+              {/* Anonymous mode missed benefits */}
+              {isAnonymousToOfficer && (
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+                  <p className="text-sm font-medium text-amber-800 mb-2 flex items-center gap-2">
+                    <AlertCircle className="h-4 w-4" />
+                    You are submitting anonymously
+                  </p>
+                  <p className="text-xs text-amber-700 mb-2">
+                    While your identity will be hidden from officers, you will
+                    miss out on:
+                  </p>
+                  <ul className="text-xs text-amber-700 space-y-1 ml-6 list-disc">
+                    <li>SMS updates when your grievance status changes</li>
+                    <li>Personal dashboard to track all your submissions</li>
+                    <li>Direct communication with the assigned officer</li>
+                    <li>
+                      Faster resolution — officers may need to contact you for
+                      details
+                    </li>
+                  </ul>
+                  <p className="text-xs text-amber-600 mt-2 italic">
+                    Tip: Even senior citizens and elderly users can simply
+                    provide their phone number to get SMS updates.
+                  </p>
+                </div>
+              )}
 
               {/* Subject */}
               <div>
@@ -1130,6 +1213,35 @@ function SubmitPageContent() {
                 />
               </div>
 
+              {/* Note when anonymous mode is ON - show missed benefits */}
+              {isAnonymousToOfficer && (
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+                  <p className="text-sm font-medium text-amber-800 mb-2 flex items-center gap-2">
+                    <AlertCircle className="h-4 w-4" />
+                    You are submitting anonymously
+                  </p>
+                  <p className="text-xs text-amber-700 mb-2">
+                    While your identity will be hidden from officers, you will
+                    miss out on:
+                  </p>
+                  <ul className="text-xs text-amber-700 space-y-1 ml-6 list-disc">
+                    <li>SMS updates when your grievance status changes</li>
+                    <li>Personal dashboard to track all your submissions</li>
+                    <li>Direct communication with the assigned officer</li>
+                    <li>
+                      Faster resolution — officers may need to contact you for
+                      details
+                    </li>
+                    <li>Auto-registration for future submissions</li>
+                  </ul>
+                  <p className="text-xs text-amber-600 mt-2 italic">
+                    Tip: Even senior citizens and elderly users can simply
+                    provide their phone number to get SMS updates in
+                    Hindi/English.
+                  </p>
+                </div>
+              )}
+
               {/* Benefits info */}
               {!session && !isAnonymousToOfficer && (
                 <div className="bg-green-50 border border-green-200 rounded-lg p-4">
@@ -1146,86 +1258,71 @@ function SubmitPageContent() {
                 </div>
               )}
 
-              {/* Contact fields */}
-              <div className="space-y-4 pt-2">
-                <div>
-                  <Label>
-                    Your Name{" "}
-                    {!isAnonymousToOfficer && (
+              {/* Contact fields - hidden when anonymous */}
+              {!isAnonymousToOfficer && (
+                <div className="space-y-4 pt-2">
+                  <div>
+                    <Label>
+                      Your Name{" "}
                       <span className="text-gray-400">(Optional)</span>
-                    )}
-                  </Label>
-                  <Input
-                    value={citizenName}
-                    onChange={(e) => setCitizenName(e.target.value)}
-                    placeholder={
-                      isAnonymousToOfficer
-                        ? "Anonymous submission"
-                        : "Enter your full name (optional)"
-                    }
-                    className="mt-1"
-                    disabled={isAnonymousToOfficer}
-                  />
-                  {isAnonymousToOfficer && (
-                    <p className="text-xs text-green-600 mt-1">
-                      A random pseudonym will be assigned for anonymous
-                      submission
-                    </p>
-                  )}
-                </div>
-                <div>
-                  <Label className="flex items-center gap-2">
-                    Phone Number
-                    {!isAnonymousToOfficer && (
+                    </Label>
+                    <Input
+                      value={citizenName}
+                      onChange={(e) => setCitizenName(e.target.value)}
+                      placeholder="Enter your full name (optional)"
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label className="flex items-center gap-2">
+                      Phone Number
                       <Badge
                         variant="outline"
                         className="text-xs bg-green-50 text-green-700 border-green-200"
                       >
                         Recommended
                       </Badge>
+                    </Label>
+                    <Input
+                      value={citizenPhone}
+                      onChange={(e) => setCitizenPhone(e.target.value)}
+                      placeholder={
+                        session
+                          ? "Phone number from your account"
+                          : "Enter your phone number for registration & updates"
+                      }
+                      className="mt-1"
+                      disabled={!!session}
+                    />
+                    {session && (
+                      <p className="text-xs text-blue-600 mt-1 flex items-center gap-1">
+                        <ShieldCheck className="h-3 w-3" />
+                        Phone number from your logged-in account
+                      </p>
                     )}
-                  </Label>
-                  <Input
-                    value={citizenPhone}
-                    onChange={(e) => setCitizenPhone(e.target.value)}
-                    placeholder={
-                      session
-                        ? "Phone number from your account"
-                        : "Enter your phone number for registration & updates"
-                    }
-                    className="mt-1"
-                    disabled={!!session && !isAnonymousToOfficer}
-                  />
-                  {session && !isAnonymousToOfficer && (
-                    <p className="text-xs text-blue-600 mt-1 flex items-center gap-1">
-                      <ShieldCheck className="h-3 w-3" />
-                      Phone number from your logged-in account
-                    </p>
-                  )}
+                  </div>
+                  <div>
+                    <Label>
+                      Email Address{" "}
+                      <span className="text-gray-400">(Optional)</span>
+                    </Label>
+                    <Input
+                      type="email"
+                      value={citizenEmail}
+                      onChange={(e) => setCitizenEmail(e.target.value)}
+                      placeholder="Enter your email (optional)"
+                      className="mt-1"
+                    />
+                  </div>
                 </div>
-                <div>
-                  <Label>
-                    Email Address{" "}
-                    <span className="text-gray-400">(Optional)</span>
-                  </Label>
-                  <Input
-                    type="email"
-                    value={citizenEmail}
-                    onChange={(e) => setCitizenEmail(e.target.value)}
-                    placeholder="Enter your email (optional)"
-                    className="mt-1"
-                  />
-                </div>
-              </div>
+              )}
 
-              {isAnonymousToOfficer &&
-                (citizenName || citizenPhone || citizenEmail) && (
-                  <p className="text-xs text-green-600 flex items-center gap-1">
-                    <EyeOff className="h-3 w-3" />
-                    Your info is stored privately and NOT shown to officers
-                    (DC/Admin can view)
-                  </p>
-                )}
+              {isAnonymousToOfficer && (
+                <p className="text-xs text-green-600 flex items-center gap-1">
+                  <EyeOff className="h-3 w-3" />A random pseudonym will be
+                  assigned. Your identity is hidden from officers.
+                </p>
+              )}
             </div>
           </div>
         );
@@ -1367,37 +1464,18 @@ function SubmitPageContent() {
                     </span>
                   </div>
 
-                  {/* Submitted as */}
-                  <div className="flex justify-between items-center border-t pt-4">
-                    <span className="text-gray-500">Submitted as</span>
-                    {session ? (
-                      <span className="flex items-center gap-1 text-green-600">
-                        <ShieldCheck className="h-4 w-4" />
-                        Registered ({session.name})
-                      </span>
-                    ) : citizenPhone.trim() ? (
-                      <span className="flex items-center gap-1 text-green-600">
-                        <ShieldCheck className="h-4 w-4" />
-                        Will be registered
-                      </span>
-                    ) : (
-                      <span className="flex items-center gap-1 text-orange-600">
-                        <AlertCircle className="h-4 w-4" />
-                        Guest (no phone)
-                      </span>
+                  {/* Privacy note */}
+                  {!session &&
+                    !citizenPhone.trim() &&
+                    !isAnonymousToOfficer && (
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-2">
+                        <p className="text-xs text-blue-700">
+                          <strong>Note:</strong> You&apos;ll receive a tracking
+                          ID after submission to track your grievance status
+                          anytime.
+                        </p>
+                      </div>
                     )}
-                  </div>
-
-                  {/* Guest warning */}
-                  {!session && !citizenPhone.trim() && (
-                    <div className="bg-orange-50 border border-orange-200 rounded-lg p-3 mt-2">
-                      <p className="text-xs text-orange-700">
-                        <strong>Note:</strong> You&apos;re submitting as a guest
-                        without a phone number. You&apos;ll still get a tracking
-                        ID but won&apos;t have dashboard access or SMS updates.
-                      </p>
-                    </div>
-                  )}
                 </CardContent>
               </Card>
 
@@ -1460,6 +1538,19 @@ function SubmitPageContent() {
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Submission note */}
+              <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
+                <p className="text-xs text-gray-600 flex items-start gap-2">
+                  <Info className="h-3.5 w-3.5 mt-0.5 flex-shrink-0 text-gray-500" />
+                  <span>
+                    After submitting, you will receive a unique{" "}
+                    <strong>Tracking Reference ID</strong> that you can use to
+                    check your grievance status anytime. You can also download
+                    or copy the reference for safekeeping.
+                  </span>
+                </p>
+              </div>
 
               {/* Action buttons */}
               <div className="flex flex-col gap-3 pt-4">

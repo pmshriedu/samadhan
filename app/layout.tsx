@@ -3,6 +3,7 @@ import "./globals.css";
 import { Toaster } from "sonner";
 import SamadhanNavbar from "@/components/samadhan-navbar";
 import SamadhanFooter from "@/components/samadhan-footer";
+import ScrollProgressBar from "@/components/topsimmner";
 
 export const metadata: Metadata = {
   title: "SAMADHAN - Citizen Grievance Portal | DAC Gangtok",
@@ -36,7 +37,10 @@ export default function SamadhanLayout({
       <body>
         <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50 flex flex-col">
           <SamadhanNavbar />
-          <main className="flex-1">{children}</main>
+          <main className="flex-1">
+            {/* <ScrollProgressBar /> */}
+            {children}
+          </main>
           <SamadhanFooter />
           <Toaster richColors position="top-center" />
         </div>
