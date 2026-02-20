@@ -15,17 +15,17 @@ export const mockSections = [
   {
     id: "sec-1",
     name: "Revenue Department",
-    description: "Land records, taxes and revenue services",
+    description: "Land records, mutation, parcha and revenue services",
   },
   {
     id: "sec-2",
     name: "Registration Department",
-    description: "Birth, death, marriage and other registrations",
+    description: "Firm, mortgage and deed registrations",
   },
   {
     id: "sec-3",
     name: "Certificate Services",
-    description: "Income, caste, residence and other certificates",
+    description: "Income, caste, COI and related certificates",
   },
   {
     id: "sec-4",
@@ -37,13 +37,34 @@ export const mockSections = [
     name: "District Administration",
     description: "General administration and permits",
   },
+  {
+    id: "sec-6",
+    name: "NOC Services",
+    description: "No Objection Certificates and official clearances",
+  },
+  {
+    id: "sec-7",
+    name: "Residence Certificate (RC) Section",
+    description: "RC issuance, rectification and duplicate services",
+  },
+  {
+    id: "sec-8",
+    name: "Election Section",
+    description: "Voter ID and electoral roll services",
+  },
+  {
+    id: "sec-9",
+    name: "Disaster Management & Compensation",
+    description: "Ex-gratia compensation and relief services",
+  },
 ];
 
 export const mockServices = [
+  // Certificate Services
   {
     id: "srv-1",
     name: "COI Certificate",
-    description: "Certificate of Income services",
+    description: "Certificate of Identification services",
     sectionId: "sec-3",
     isActive: true,
   },
@@ -54,38 +75,65 @@ export const mockServices = [
     sectionId: "sec-3",
     isActive: true,
   },
+
+  // Revenue
   {
     id: "srv-3",
     name: "Land Records",
-    description: "Fard, mutation, land certificates",
+    description: "Fard, mutation and parcha related services",
     sectionId: "sec-1",
     isActive: true,
   },
   {
     id: "srv-4",
     name: "Land Revenue",
-    description: "Property tax, land revenue collection",
+    description: "Property tax and land revenue collection",
     sectionId: "sec-1",
     isActive: true,
   },
   {
+    id: "srv-21",
+    name: "Mutation of Inheritance",
+    description: "Mutation after death of landowner",
+    sectionId: "sec-1",
+    isActive: true,
+  },
+  {
+    id: "srv-22",
+    name: "Non-Encumbrance Certificate (NEC)",
+    description: "Certificate confirming no liabilities",
+    sectionId: "sec-1",
+    isActive: true,
+  },
+  {
+    id: "srv-23",
+    name: "Encumbrance Certificate (EC)",
+    description: "Encumbrance details for property",
+    sectionId: "sec-1",
+    isActive: true,
+  },
+
+  // Registration
+  {
     id: "srv-5",
-    name: "Birth/Death Registration",
-    description: "Registration and certificates",
+    name: "Firm Registration",
+    description: "Registration of firm and partnership",
     sectionId: "sec-2",
     isActive: true,
   },
   {
     id: "srv-6",
-    name: "Marriage Registration",
-    description: "Marriage registration and certificates",
+    name: "Land Registration",
+    description: "Sale deed / Gift deed registration",
     sectionId: "sec-2",
     isActive: true,
   },
+
+  // District Administration
   {
     id: "srv-7",
     name: "Trade License",
-    description: "Business trade license applications",
+    description: "Trade license issuance and renewal",
     sectionId: "sec-5",
     isActive: true,
   },
@@ -96,16 +144,76 @@ export const mockServices = [
     sectionId: "sec-5",
     isActive: true,
   },
+
+  // PWD
   {
     id: "srv-9",
     name: "Road Maintenance",
-    description: "Potholes, road repairs",
+    description: "Pothole and road repair complaints",
     sectionId: "sec-4",
+    isActive: true,
+  },
+
+  // NOC Services
+  {
+    id: "srv-10",
+    name: "NOC for Loan",
+    description: "No Objection Certificate for loan",
+    sectionId: "sec-6",
+    isActive: true,
+  },
+  {
+    id: "srv-11",
+    name: "NOC for Government Quarter",
+    description: "No dwelling / government quarter NOC",
+    sectionId: "sec-6",
+    isActive: true,
+  },
+
+  // RC Section
+  {
+    id: "srv-12",
+    name: "New RC Application",
+    description: "Residence Certificate issuance",
+    sectionId: "sec-7",
+    isActive: true,
+  },
+  {
+    id: "srv-13",
+    name: "Duplicate RC",
+    description: "Duplicate Residence Certificate",
+    sectionId: "sec-7",
+    isActive: true,
+  },
+
+  // Election
+  {
+    id: "srv-14",
+    name: "New EPIC Card",
+    description: "New voter ID application",
+    sectionId: "sec-8",
+    isActive: true,
+  },
+  {
+    id: "srv-15",
+    name: "EPIC Correction",
+    description: "Correction in voter ID",
+    sectionId: "sec-8",
+    isActive: true,
+  },
+
+  // Disaster
+  {
+    id: "srv-16",
+    name: "Ex-Gratia Compensation",
+    description: "Compensation for death, injury or house damage",
+    sectionId: "sec-9",
     isActive: true,
   },
 ];
 
 export const mockCategories = [
+  // General
   {
     id: "cat-1",
     name: "Processing Delay",
@@ -114,87 +222,175 @@ export const mockCategories = [
   },
   {
     id: "cat-2",
-    name: "Document Verification",
+    name: "Document Rejection",
     description: null,
     serviceId: "srv-1",
   },
   {
     id: "cat-3",
-    name: "Income Proof Issues",
-    description: null,
-    serviceId: "srv-1",
-  },
-  {
-    id: "cat-4",
-    name: "Certificate Format",
-    description: null,
-    serviceId: "srv-1",
-  },
-  {
-    id: "cat-5",
-    name: "Caste Verification",
-    description: null,
-    serviceId: "srv-2",
-  },
-  {
-    id: "cat-6",
-    name: "Category Change",
-    description: null,
-    serviceId: "srv-2",
-  },
-  {
-    id: "cat-7",
-    name: "Delay in Processing",
-    description: null,
-    serviceId: "srv-3",
-  },
-  {
-    id: "cat-8",
-    name: "Staff Behavior",
-    description: null,
-    serviceId: "srv-3",
-  },
-  {
-    id: "cat-9",
-    name: "Document Issues",
-    description: null,
-    serviceId: "srv-3",
-  },
-  {
-    id: "cat-10",
     name: "Wrong Information",
     description: null,
     serviceId: "srv-3",
   },
   {
-    id: "cat-11",
+    id: "cat-4",
+    name: "Staff Behavior",
+    description: null,
+    serviceId: "srv-3",
+  },
+
+  // Revenue
+  {
+    id: "cat-5",
+    name: "Mutation Delay",
+    description: null,
+    serviceId: "srv-21",
+  },
+  {
+    id: "cat-6",
+    name: "Boundary Dispute",
+    description: null,
+    serviceId: "srv-21",
+  },
+  {
+    id: "cat-7",
+    name: "NEC Not Issued",
+    description: null,
+    serviceId: "srv-22",
+  },
+  {
+    id: "cat-8",
+    name: "EC Not Issued",
+    description: null,
+    serviceId: "srv-23",
+  },
+
+  // Registration
+  {
+    id: "cat-9",
     name: "Registration Delay",
     description: null,
-    serviceId: "srv-5",
+    serviceId: "srv-6",
   },
+
+  // Trade License
   {
-    id: "cat-12",
-    name: "Certificate Issuance",
-    description: null,
-    serviceId: "srv-5",
-  },
-  {
-    id: "cat-13",
-    name: "License Renewal",
+    id: "cat-10",
+    name: "License Renewal Delay",
     description: null,
     serviceId: "srv-7",
   },
+
+  // Building
   {
-    id: "cat-14",
-    name: "Permit Application",
+    id: "cat-11",
+    name: "Permit Approval Delay",
     description: null,
     serviceId: "srv-8",
   },
+
+  // PWD
   {
-    id: "cat-15",
+    id: "cat-12",
     name: "Pothole Complaint",
     description: null,
     serviceId: "srv-9",
+  },
+  { id: "cat-13", name: "Road Damage", description: null, serviceId: "srv-9" },
+
+  // NOC
+  { id: "cat-14", name: "NOC Delay", description: null, serviceId: "srv-10" },
+  {
+    id: "cat-15",
+    name: "Amin Report Pending",
+    description: null,
+    serviceId: "srv-10",
+  },
+
+  // RC
+  {
+    id: "cat-16",
+    name: "RC Verification Pending",
+    description: null,
+    serviceId: "srv-12",
+  },
+  {
+    id: "cat-17",
+    name: "Duplicate RC Delay",
+    description: null,
+    serviceId: "srv-13",
+  },
+
+  // Election
+  {
+    id: "cat-18",
+    name: "EPIC Not Delivered",
+    description: null,
+    serviceId: "srv-14",
+  },
+  {
+    id: "cat-19",
+    name: "Name Correction Not Updated",
+    description: null,
+    serviceId: "srv-15",
+  },
+
+  // Disaster
+  {
+    id: "cat-20",
+    name: "Compensation Not Received",
+    description: null,
+    serviceId: "srv-16",
+  },
+
+  // Additional categories for services without categories
+  {
+    id: "cat-21",
+    name: "Caste Verification Delay",
+    description: null,
+    serviceId: "srv-2",
+  },
+  {
+    id: "cat-22",
+    name: "Category Change Delay",
+    description: null,
+    serviceId: "srv-2",
+  },
+  {
+    id: "cat-23",
+    name: "Tax Payment Issues",
+    description: null,
+    serviceId: "srv-4",
+  },
+  {
+    id: "cat-24",
+    name: "Revenue Collection Delay",
+    description: null,
+    serviceId: "srv-4",
+  },
+  {
+    id: "cat-25",
+    name: "Firm Registration Delay",
+    description: null,
+    serviceId: "srv-5",
+  },
+  {
+    id: "cat-26",
+    name: "Partnership Registration Issues",
+    description: null,
+    serviceId: "srv-5",
+  },
+  {
+    id: "cat-27",
+    name: "Government Quarter NOC Delay",
+    description: null,
+    serviceId: "srv-11",
+  },
+  {
+    id: "cat-28",
+    name: "Quarter Allocation Issues",
+    description: null,
+    serviceId: "srv-11",
   },
 ];
 
